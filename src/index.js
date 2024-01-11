@@ -5,17 +5,46 @@ const { ethers } = require("ethers");
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
 
-const determineDataType = () => {
-  
-}
+const isInputAnInteger = (num) => {
+  if (Math.round(num) === Number(num)) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
-const getFactorsOfNumber = () => {
+const getFactors = (num) => {
+  let factors = [];
 
-}
+  for (let i = 0; i <= num / 2; i++) {
+    if (num % i === 0) {
+      factors.push(i);
+    }
+  }
+  factors.push(Math.round(num));
+
+  return factors;
+};
+
 async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
 
-  const input = data["payload"];
+  const decodedInput = ethers.toUtf8String(data["payload"]);
+
+  if (!isInputAnInteger(decodedInput)) {
+    console.log("Invalid integer value");
+    console.log(
+      "The received advance request for the hex data string value " +
+        JSON.stringify(decodedInput)
+    );
+  } else {
+    const factors = getFactors(decodedInput);
+    console.log("Valid integer");
+    console.log(
+      "The received advance request for the hex data number value " +
+        JSON.stringify(factors)
+    );
+  }
 
   return "accept";
 }
